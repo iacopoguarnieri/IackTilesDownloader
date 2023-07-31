@@ -3,17 +3,10 @@ import os
 import time
 from datetime import datetime
 
-# Variabili di programma
-revision = "1.0.0"
-date_revision = "2023.07.30"
-# Cartella contenente i file che crea il programma
-fileFolder = "File"
-# Cartella di log
-folderLog = "Log"
-# File di log
-logFilePath = "imageDownloaderLog.txt"
-# Nome del file che contiene i link delle tiles da scaricare
-file_path = "tilesName.txt"
+# Funzione che controlla se un file esiste già sotto una determinata cartella
+def file_exists_in_folder(folder_path, file_name):
+    file_path = os.path.join(folder_path, file_name)
+    return os.path.exists(file_path)
 
 # Funzione che appende una riga di log nel file MapCoordinatesExtractorLog.txt
 def appendInLogFile(line):
@@ -50,6 +43,18 @@ def format_time(seconds):
     time_string += f"{seconds:.2f} seconds"
 
     return time_string
+
+# Variabili di programma
+revision = "1.0.0"
+date_revision = "2023.07.30"
+# Cartella contenente i file che crea il programma
+fileFolder = "File"
+# Cartella di log
+folderLog = "Log"
+# File di log
+logFilePath = "imageDownloaderLog.txt"
+# Nome del file che contiene i link delle tiles da scaricare
+file_path = "tilesName.txt"
 
 # Mi salvo il tempo di inizio esecuzione
 start_time = time.time()
@@ -113,21 +118,23 @@ with open(fileFolder + "/" + file_path, "r") as file:
         # Nome con cui salvare l'immagine da scaricare
         imageFileName = words[5].replace("\n", "")
 
-        # Controllo se la folder/subfolder esiste già altrimenti la creo
-        if not os.path.exists(city + '/tiles/' + folder  + "/" + subfolder):
-            os.makedirs(city + '/tiles/' + folder + "/" + subfolder)
-            print(f"Folder {folder}/{subfolder} created successfully.")
-        #else: print(f"Folder {folder}/{subfolder} already exists.")
-
-        # Creo il percorso con il nome del file
-        imagePathAndName = city + '/tiles/' + folder + '/' + subfolder + '/' + imageFileName
-        # Apro l'url
-        opener = urllib.request.URLopener()
-        # Aggiungo l'header all'url
-        opener.addheader('User-Agent', 'whatever')
-        # Salvo l'immagine
-        filename, headers = opener.retrieve(imageUrl, imagePathAndName)
-
+        if file_exists_in_folder(city + '/tiles/' + folder  + "/" + subfolder, imageFileName):
+            print(f"The file '{imageFileName}' exists already in the folder.")
+        else:
+            # Controllo se la folder/subfolder esiste già altrimenti la creo
+            if not os.path.exists(city + '/tiles/' + folder  + "/" + subfolder):
+                os.makedirs(city + '/tiles/' + folder + "/" + subfolder)
+                print(f"Folder {folder}/{subfolder} created successfully.")
+            # Creo il percorso con il nome del file
+            imagePathAndName = city + '/tiles/' + folder + '/' + subfolder + '/' + imageFileName
+            # Apro l'url
+            opener = urllib.request.URLopener()
+            # Aggiungo l'header all'url
+            opener.addheader('User-Agent', 'whatever')
+            # Salvo l'immagine
+            filename, headers = opener.retrieve(imageUrl, imagePathAndName)
+            # Stampo l'avviso
+            print(f"Image {i}/{line_count} download compleated: " + imagePathAndName)
         # Attendo 0.5 secondi prima di scaricare la nuova immagine
         time.sleep(0.5)
 
@@ -147,7 +154,6 @@ with open(fileFolder + "/" + file_path, "r") as file:
         formatted_average_time = format_time(average_time_per_iteration)
         formatted_total_time = format_time(remaining_time)
         # Stampo i risultati
-        print(f"Image {i}/{line_count} download compleated: " + imagePathAndName)
         print(f"Average time per iteration: {formatted_average_time}")
         print(f"Total time remaining: {formatted_total_time}")
         print("----------------------\n")

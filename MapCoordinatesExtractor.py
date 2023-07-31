@@ -3,20 +3,6 @@ import time
 import os
 from datetime import datetime
 
-# Variabili di programma
-revision = "1.0.0"
-date_revision = "2023.07.30"
-# File xml contenente tutte le coordinate da estrarre
-xml_file_path = "map.xml"
-# File su cui salvare le coordinate
-final_file_path = "latLon.txt"
-# Cartella contenente i file che crea il programma
-fileFolder = "File"
-# Cartella di log
-folder = "Log"
-# File di log
-logFilePath = "MapCoordinatesExtractorLog.txt"
-
 # Funzione che appende una riga di log nel file MapCoordinatesExtractorLog.txt
 def appendInLogFile(line):
     # Apro il file in modalità 'a+' mode (appende o crea il file se non esiste)
@@ -36,6 +22,20 @@ def appendInLogFile(line):
         formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
         # Scrivo la stringa all'interno del file
         file.write(formatted_datetime + " - > " + line + "\n")
+
+# Variabili di programma
+revision = "1.0.0"
+date_revision = "2023.07.30"
+# File xml contenente tutte le coordinate da estrarre
+xml_file_path = "map.xml"
+# File su cui salvare le coordinate
+final_file_path = "latLon.txt"
+# Cartella contenente i file che crea il programma
+fileFolder = "File"
+# Cartella di log
+folder = "Log"
+# File di log
+logFilePath = "MapCoordinatesExtractorLog.txt"
 
 # Mi salvo il tempo di inizio esecuzione
 start_time = time.time()
